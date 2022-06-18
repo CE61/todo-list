@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-do List</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="javascript.js"></script>
+</head>
+<body>
+    <!-- grayout <div id="opaque"></div> -->
+    <!-- new project popup <div class="new-project-modal">
+        <form>
+            <label for="projectTitle">Project Title</label><br>
+            <input type="text" id="projectTitle" name="projectTitle"><br>
+            <label for="projectDescription">Description</label><br>
+            <textarea type="text" id="projectDescription" name="projectDescription" rows="19" cols="38"></textarea>
+            <input class="submit-button" type="button" value="Submit">
+        </form>
+    </div> -->
+    
+    <!-- project to-do list <div class="project-overview-modal">
+        <h1 style="font-family: Arial, Helvetica, sans-serif;">To-Do List</h1>
+        <div class="to-do-item">
+            <div class="item-top-info">
+                <p class="priority">!!!</p>
+                <ul><li class="to-do-title">Title</li></ul>
+                <p>Due on</p>
+                <p id="date">02/02/23</p>
+                <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                    <path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+                </svg>
+            </div>
+            <div class="item-bottom-info">
+                <div class="item-description">
+                    <p>Description</p>
+                </div>
+            </div>
+        </div>
+        <button id="add-todo-item"></button>
+    </div> -->
+
+    <div class="title-panel">Task Manager</div>
+    <div class="grid-container">
+        <div class="card">
+            <p class="card-title">20 Character Limit</p>
+            <p class="card-description">Apart from counting words and characters, our online editor can help you to improve word choice and writing style, and, optionally, help you to detect grammar mistakes and plagiarism. To check word count, simply place your cursor into the text box above and start typing. You'll see the number of characters and words increase or decrease as you type, delete, and edit them. </p>
+            <svg style="width:24px;height:24px" viewBox="0 0 24 24">
+                <path d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+            </svg>
+        </div>
+        <div class="add-project">
+            <button class="add-icon"></button>
+        </div>
+    </div>
+    <script src="javascript.js"></script>
+</body>
+</html>
