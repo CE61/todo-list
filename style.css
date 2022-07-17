@@ -2,11 +2,12 @@ body{
     margin: 0;
     display: flex;
     flex-direction: column;
+    overflow: auto;
     flex: 1;
     min-height: 100vh;
-    background-color: black;
+    background-color: whitesmoke;
 }
-#opaque{
+.opaque{
     position: fixed;
     width: 100%;
     height: 100%;
@@ -14,8 +15,14 @@ body{
     background-color: black;
     opacity: 0.3;
 }
+.hidden{
+    display: none;
+}
+.selected{
+    border: 2px solid darkslategray;
+}
 .new-project-modal{
-    position: fixed;
+    position: absolute;
     display:flex;
     flex-direction: column;
     background-color: whitesmoke;
@@ -23,7 +30,7 @@ body{
     width: 500px;
     align-self: center;
     align-items: center;
-    top: 128px;
+    top: 24px;
     padding-left: 12px;
     padding-right: 12px;
     padding-top: 18px;
@@ -110,6 +117,9 @@ form{
     border-left: solid 2px darkslategray;
     border-right: solid 2px darkslategray;
 }
+.card:hover{
+    cursor: pointer;
+}
 .card>p{
     margin: 0;
 }
@@ -143,6 +153,70 @@ form{
     justify-content: center;
     align-items: center;
 }
+.close-icon{
+    position: absolute;
+    top: -16px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    z-index: 2;
+    border-style: none;
+    background-color: transparent;
+    background-image: url(./close-icon.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.close-icon:hover{
+    background-image: url(./close-icon-hover.svg);
+    cursor: pointer;
+}
+.close-icon:active{
+    background-image: url(./close-icon-active.svg);
+    cursor: default;
+}
+.edit-icon{
+    position: absolute;
+    top: 32px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    z-index: 2;
+    border-style: none;
+    background-color: transparent;
+    background-image: url(./edit-icon.svg);
+    background-repeat: no-repeat;
+    background-size: 80% 80%;
+    background-position: center;
+}
+.edit-icon:hover{
+    background-image: url(./edit-icon-hover.svg);
+    cursor: pointer;
+}
+.edit-icon:active{
+    background-image: url(./edit-icon-active.svg);
+    cursor: default;
+}
+.check-icon{
+    position: absolute;
+    top: 32px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    z-index: 2;
+    border-style: none;
+    background-color: transparent;
+    background-image: url(./check-icon.svg);
+    background-repeat: no-repeat;
+    background-size: 200% 200%;
+}
+.check-icon:hover{
+    background-image: url(./check-icon-hover.svg);
+    cursor: pointer;
+}
+.check-icon:active{
+    background-image: url(./check-icon-active.svg);
+    cursor: default;
+}
 .add-icon{
     height: 100px;
     width: 100px;
@@ -160,7 +234,7 @@ form{
     cursor: default;
 }
 .project-overview-modal{
-    position: fixed;
+    position: absolute;
     display:flex;
     flex-direction: column;
     background-color: whitesmoke;
@@ -168,7 +242,7 @@ form{
     width: 800px;
     align-self: center;
     align-items: center;
-    top: 128px;
+    top: 32px;
     padding-left: 12px;
     padding-right: 12px;
     padding-top: 18px;
@@ -182,12 +256,60 @@ form{
 }
 .to-do-item{
     display: flex;
+    position: relative;
     flex: 1;
     flex-direction:column;
     width: 100%;
-    border: 1px solid darkslategray;
-    border-left-style: none;
-    border-right-style: none;
+    margin: 0;
+    padding: 0;
+}
+.to-do-item-form{
+    display: flex;
+    position: relative;
+    flex: 1;
+    flex-direction:column;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.to-do-item-form>.close-icon{
+    background-color: darkslategray;
+    border-radius: 4px;
+    top: 0px;
+    right: 0px;
+}
+.to-do-item-form>.check-icon{
+    background-color: darkslategray;
+    border-radius: 4px;
+    bottom: 0px;
+    right: 0px;
+}
+.to-do-item{
+    display: flex;
+    position: relative;
+    flex: 1;
+    flex-direction:column;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.to-do-item:hover{
+    cursor: pointer;
+}
+.to-do-item:active{
+    cursor: default;
+}
+.to-do-item>.close-icon{
+    background-color: darkslategray;
+    border-radius: 4px;
+    top: 0px;
+    right: 0px;
+}
+.to-do-item>.edit-icon{
+    background-color: darkslategray;
+    border-radius: 4px;
+    bottom: 0px;
+    right: 0px;
 }
 .item-top-info{
     display: flex;
@@ -210,13 +332,13 @@ form{
     background-color: yellow;
     font-size: 24px;
 }
-#date{
-    padding-left: 4px;
-    font-size: 18px;
+#dueDate{
+    padding-left: 8px;
 }
 .to-do-item svg{
     fill: green;
     padding-left: 4px;
+    justify-self: flex-end;
 }
 .item-bottom-info{
     display: flex;
@@ -224,17 +346,22 @@ form{
     width: 100%;
     align-items: center;
     justify-content: center;
-    gap: 24px;
-    padding-bottom: 24px;
 }
 .item-description{
-    width: 700px;
+    width: 100%;
     height: 100px;
     overflow: auto;
-    border-top: solid 2px darkslategray;
-    border-bottom: solid 2px darkslategray;
+    background-color: white;
     border-left: solid 2px darkslategray;
     border-right: solid 2px darkslategray;
+    border-bottom: solid 2px darkslategray;
+    border-top: solid 1px darkslategray;
+    margin-bottom: 8px;
+}
+.item-description>p{
+    margin-top: 8px;
+    padding-right: 8px;
+    padding-left: 8px;
 }
 #add-todo-item{
     height: 70px;
