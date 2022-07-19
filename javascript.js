@@ -25,7 +25,6 @@ class ToDoItem{
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
-        this.beingEdited = false;
     }
 }
 function projectIsDuplicate(projectTitle){
@@ -45,35 +44,103 @@ function deleteProject(projectTitle){
     console.log(projectList);
     console.log("-----end of log-----");
 }
-function refreshToDoListArray(projectIndex){
+function refreshToDoListArray(projectIndex, projectOverviewModal){
     projectList[projectIndex].toDoItemList = [];
-    let itemsArray = Array.from(projectOverviewModal.querySelectorAll(".to-do-item"));
-    itemsArray.forEach(toDoItem=>{
-        let priority = toDoItem.querySelectorAll("#priority")[0].textContent;
-        let title = toDoItem.querySelectorAll("#title")[0].textContent;
-        let description = toDoItem.querySelectorAll("#description")[0].textContent;
-        let dueDate = toDoItem.querySelectorAll("#dueDate")[0].textContent;
-        const todoItem = new ToDoItem(priority,title,description,dueDate);
+    let itemNodeArray = Array.from(projectOverviewModal.querySelectorAll(".to-do-item"));
+    itemNodeArray.forEach(toDoItemNode=>{
+        let priority = toDoItemNode.querySelectorAll("#priority")[0].textContent;
+        let title = toDoItemNode.querySelectorAll("#title")[0].textContent;
+        let description = toDoItemNode.querySelectorAll("#description")[0].textContent;
+        let dueDate = toDoItemNode.querySelectorAll("#dueDate")[0].textContent;
+        const toDoItem = new ToDoItem(priority,title,description,dueDate);
 
-        console.log(todoItem.title + "- title of toDoItem loaded from modal.");
-        projectList[projectIndex].toDoItemList.push(toDoItem);
+        console.log(toDoItem.title + "- title of toDoItem loaded from modal.");
+        projectList[projectIndex].addItem(toDoItem);
     });
     console.log("Refreshed items array!");
+    console.log(projectList[projectIndex].toDoItemList);
 }
 function refreshToDoList(projectIndex, projectOverviewModal){
     const toDoNodes = projectOverviewModal.querySelectorAll(".to-do-item,.to-do-item-form");
+    const addButton = projectOverviewModal.querySelectorAll("#add-todo-item")[0];
     toDoNodes.forEach(toDoNode =>{
         toDoNode.remove();
     });
-
+    addButton.remove();
     for(let i = 0; i < projectList[projectIndex].toDoItemList.length; i++){
         let priority = projectList[projectIndex].toDoItemList[i].priority;
         let title = projectList[projectIndex].toDoItemList[i].title;
-        let description = projectList[projecIndex].toDoItemList.description;
-        let dueDate = projectList[projectIndex].toDoItemList.dueDate;
+        let description = projectList[projectIndex].toDoItemList[i].description;
+        let dueDate = projectList[projectIndex].toDoItemList[i].dueDate;
+
         const toDoItem = createToDoItem(priority, title, description, dueDate);
+        const toDoItemCloseButton = toDoItem.querySelectorAll(".close-icon")[0];
+        toDoItemCloseButton.addEventListener("click", (e)=>{
+            toDoItem.remove();
+            refreshToDoListArray(projectIndex,projectOverviewModal);
+            e.stopPropagation();
+        });
+        const toDoItemEditButton = toDoItem.querySelectorAll(".edit-icon")[0];
+        toDoItemEditButton.addEventListener("click", (e)=>{
+            const toDoItemForm = createToDoItemForm();
+            toDoItemForm.querySelectorAll("#toDoItemTitle")[0].value = title;
+            toDoItemForm.querySelectorAll("#priority")[0].value = priority;
+            toDoItemForm.querySelectorAll("#dueDate")[0].value = dueDate;
+            toDoItemForm.querySelectorAll("#description")[0].value = description;
+
+            const toDoItemFormSubmitButton = toDoItemForm.querySelectorAll(".check-icon")[0];
+            toDoItemFormSubmitButton.addEventListener("click",()=>{
+                let priority = toDoItemForm.querySelectorAll("#priority")[0].value;
+                let title = toDoItemForm.querySelectorAll("#toDoItemTitle")[0].value;
+                let dueDate = toDoItemForm.querySelectorAll("#dueDate")[0].value;
+                let description = toDoItemForm.querySelectorAll("#description")[0].value;
+    
+                const toDoItem = createToDoItem(priority,title,description,dueDate);
+                const toDoItemCloseButton = toDoItem.querySelectorAll(".close-icon")[0];
+                toDoItemCloseButton.addEventListener("click", (e)=>{
+                    toDoItem.remove();
+                    refreshToDoListArray(projectIndex,projectOverviewModal);
+                    e.stopPropagation();
+                });
+                const toDoItemEditButton = toDoItem.querySelectorAll(".edit-icon")[0];
+                toDoItemEditButton.addEventListener("click", (e)=>{
+                    toDoItemForm.querySelectorAll("#toDoItemTitle")[0].value = title;
+                    toDoItemForm.querySelectorAll("#priority")[0].value = priority;
+                    toDoItemForm.querySelectorAll("#dueDate")[0].value = dueDate;
+                    toDoItemForm.querySelectorAll("#description")[0].value = description;
+                    projectOverviewModal.replaceChild(toDoItemForm,toDoItem);
+                    e.stopPropagation();
+                });
+                const itemDescription = toDoItem.querySelectorAll(".item-description")[0];
+                toDoItem.addEventListener("click",()=>{
+                    if(itemDescription.classList.contains("hidden")){
+                        itemDescription.classList.remove("hidden");
+                    }else{
+                        itemDescription.classList.add("hidden");
+                    }
+                });
+                projectOverviewModal.insertBefore(toDoItem,toDoItemForm);
+                toDoItemFormCloseButton.click();
+                refreshToDoListArray(projectIndex, projectOverviewModal);
+            });
+            const toDoItemFormCloseButton = toDoItemForm.querySelectorAll(".close-icon")[0];
+            toDoItemFormCloseButton.addEventListener("click",()=>{
+                toDoItemForm.remove();
+            });
+            projectOverviewModal.replaceChild(toDoItemForm,toDoItem);
+            e.stopPropagation();
+        });
+        const itemDescription = toDoItem.querySelectorAll(".item-description")[0];
+        toDoItem.addEventListener("click",()=>{
+            if(itemDescription.classList.contains("hidden")){
+                itemDescription.classList.remove("hidden");
+            }else{
+                itemDescription.classList.add("hidden");
+            }
+        });
         projectOverviewModal.appendChild(toDoItem);
     }
+    projectOverviewModal.appendChild(addButton);
 }
 function createProjectOverview(projectIndex){
     const projectOverviewModal = document.createElement("div");
@@ -81,6 +148,56 @@ function createProjectOverview(projectIndex){
     projectOverviewModal.innerHTML=`<button class="close-icon"></button>
         <h1 style="font-family: Arial, Helvetica, sans-serif;">To-Do List</h1>
         <button id="add-todo-item"></button>`;
+    const closeButton = projectOverviewModal.querySelectorAll(".close-icon")[0];
+    closeButton.addEventListener("click",()=>{
+        projectOverviewModal.remove();
+        body.removeChild(grayOut);
+    });
+
+    const addButton = projectOverviewModal.querySelectorAll("#add-todo-item")[0];
+    addButton.addEventListener("click",()=>{
+        const toDoItemForm = createToDoItemForm();
+        const toDoItemFormSubmitButton = toDoItemForm.querySelectorAll(".check-icon")[0];
+        toDoItemFormSubmitButton.addEventListener("click",()=>{
+            let priority = toDoItemForm.querySelectorAll("#priority")[0].value;
+            let title = toDoItemForm.querySelectorAll("#toDoItemTitle")[0].value;
+            let dueDate = toDoItemForm.querySelectorAll("#dueDate")[0].value;
+            let description = toDoItemForm.querySelectorAll("#description")[0].value;
+
+            const toDoItem = createToDoItem(priority,title,description,dueDate);
+            const toDoItemCloseButton = toDoItem.querySelectorAll(".close-icon")[0];
+            toDoItemCloseButton.addEventListener("click", (e)=>{
+                toDoItem.remove();
+                refreshToDoListArray(projectIndex,projectOverviewModal);
+                e.stopPropagation();
+            });
+            const toDoItemEditButton = toDoItem.querySelectorAll(".edit-icon")[0];
+            toDoItemEditButton.addEventListener("click", (e)=>{
+                toDoItemForm.querySelectorAll("#toDoItemTitle")[0].value = title;
+                toDoItemForm.querySelectorAll("#priority")[0].value = priority;
+                toDoItemForm.querySelectorAll("#dueDate")[0].value = dueDate;
+                toDoItemForm.querySelectorAll("#description")[0].value = description;
+                projectOverviewModal.replaceChild(toDoItemForm,toDoItem);
+                e.stopPropagation();
+            });
+            const itemDescription = toDoItem.querySelectorAll(".item-description")[0];
+            toDoItem.addEventListener("click",()=>{
+                if(itemDescription.classList.contains("hidden")){
+                    itemDescription.classList.remove("hidden");
+                }else{
+                    itemDescription.classList.add("hidden");
+                }
+            });
+            projectOverviewModal.insertBefore(toDoItem,toDoItemForm);
+            toDoItemFormCloseButton.click();
+            refreshToDoListArray(projectIndex, projectOverviewModal);
+        });
+        const toDoItemFormCloseButton = toDoItemForm.querySelectorAll(".close-icon")[0];
+        toDoItemFormCloseButton.addEventListener("click",()=>{
+            toDoItemForm.remove();
+        });
+        projectOverviewModal.insertBefore(toDoItemForm,projectOverviewModal.lastChild);
+    });
     refreshToDoList(projectIndex, projectOverviewModal);
     body.appendChild(projectOverviewModal);
     body.appendChild(grayOut);
@@ -104,6 +221,7 @@ function createToDoItemForm(){
         <div class="item-bottom-info">
             <textarea style="resize: none;" class="item-description" name="description" id="description" cols="30" rows="10" placeholder="Enter description here."></textarea>
         </div>`;
+        return toDoItemForm;
 }
 function createToDoItem(priority, title, description, dueDate){
     const toDoItem = document.createElement("div");
