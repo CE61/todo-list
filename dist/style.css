@@ -119,6 +119,11 @@ form{
 }
 .card:hover{
     cursor: pointer;
+    border-color: slategray;
+}
+.card:active{
+    cursor: default;
+    border-color: black;
 }
 .card>p{
     margin: 0;
